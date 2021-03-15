@@ -1,14 +1,16 @@
 # efts_io
 
-## RR modelling with ML
+Reading and writing Ensemble Forecast Time Series in netCDF files.
+
+## Overview
+
+Plain text files are not well suited to storing the large volumes of data generated for and by ensemble streamflow forecasts with numerical weather prediction models. netCDF is a binary file format developed primarily for climate, ocean and meteorological data. netCDF has traditionally been used to store time slices of gridded data, rather than complete time series of point data. **efts** is for handling the latter. 
+
+**efts** is designed to handle netCDF data following the [NetCDF for Water Forecasting Conventions v2.0](https://github.com/jmp75/efts/blob/master/docs/netcdf_for_water_forecasting.md)
 
 ## License
 
 TBD
-
-## Documentation
-
-Nope
 
 ## Installation 
 

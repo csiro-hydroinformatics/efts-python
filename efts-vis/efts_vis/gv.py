@@ -10,6 +10,10 @@ import cftime
 from ipywidgets import Output, HTML
 from ipyleaflet import Map, Marker, MarkerCluster, basemaps
 
+# Had unexpected issues with displaying matplotlib in output widgets.
+# https://github.com/jupyter-widgets/ipywidgets/issues/1853#issuecomment-349201240 seems to do the job...
+from ipywidgets.widgets.interaction import show_inline_matplotlib_plots
+
 class PropertyAdapter:
     def __init__(self, x_data:xr.Dataset, lat:str='lat', lon:str='lon', key:str='station'):
         self.marker_info = dict()
