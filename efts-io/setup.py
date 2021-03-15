@@ -1,14 +1,15 @@
-"""A package for....
+"""Reading and writing Ensemble Forecast Time Series in netCDF files.
 
 See:
-https://bitbucket.csiro.au/projects/EIS/repos/rr-ml
+https://github.com/csiro-hydroinformatics/efts-python
 """
 
-from setuptools import setup
-import re
+# Always prefer setuptools over distutils
+from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 import os
+import re
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -24,30 +25,13 @@ else:
     raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
 
 
-# try:
-#     import pypandoc
-#     long_description = pypandoc.convert('README.md', 'rst')
-#     long_description = long_description.replace("\r","") # Do not forget this line
-#     long_description_content_type='text/markdown'
-# except:
-#     print("Pandoc not found. Long_description conversion failure.")
-#     # Get the long description from the README file
-#     with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
-#         long_description = f.read()
-#         long_description_content_type='text/markdown'
-
-# with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+# Get the long description from the README file
+# with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 #     long_description = f.read()
-#     long_description_content_type='text/markdown'
 
-with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
+with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
-    long_description_content_type='text/x-rst'
-
-
-
-# with open(os.path.join(os.path.dirname(__file__), "requirements.txt"), "r") as f:
-#     REQUIREMENTS = f.read().splitlines()
+    long_description_content_type='text/markdown'
 
 REQUIREMENTS = ['pandas',
                 'numpy',
@@ -55,16 +39,17 @@ REQUIREMENTS = ['pandas',
                 'xarray']
 
 TEST_REQUIREMENTS = ['pytest',
-                     'coveralls',
-                     'pytest-cov',
-                     'pytest-mpl'
+                    #  'coveralls',
+                    #  'pytest-cov',
+                    #  'pytest-mpl'
                      ]
 
 CLASSIFIERS = ['Development Status :: 3 - Alpha',
                 'Intended Audience :: Science/Research',
-                'Topic :: Software Development :: Build Tools',
-                'License :: Free For Educational Use',
+                'License :: OSI Approved :: MIT License',
                 'Operating System :: OS Independent',
+                'Topic :: Scientific/Engineering :: Hydrology',
+                'Topic :: Database',
                 'Programming Language :: Python',
                 'Programming Language :: Python :: 3.8',
                 'Programming Language :: Python :: 3.9'
@@ -75,23 +60,24 @@ CLASSIFIERS = ['Development Status :: 3 - Alpha',
 setup(
     name='efts_io',
     version=verstr,
-    description='A Python package for something', 
+    description='Reading and writing Ensemble Forecast Time Series in netCDF files.', 
     long_description=long_description,
-    url='https://bitbucket.csiro.au/projects/EIS/repos/rr-ml',
+    long_description_content_type=long_description_content_type,
+    url='https://github.com/csiro-hydroinformatics/efts-python',
     author='Jean-Michel Perraud',
     author_email='per202@csiro.au',
     classifiers=CLASSIFIERS,
-    keywords='lithology geophysics groundwater data-mining',
+    keywords='earth-sciences hydrology forecast',
     packages=['efts_io'],
     install_requires=REQUIREMENTS,
-    extras_require={
-        # ':python_version >= "3.6"': [
-        #     'PyQt5',
-        # ]
-    # extras_require={  # Optional
-    #     'dev': ['check-manifest'],
-    #     'test': ['coverage'],
-    },
+    # extras_require={
+    #     # ':python_version >= "3.6"': [
+    #     #     'PyQt5',
+    #     # ]
+    # # extras_require={  # Optional
+    # #     'dev': ['check-manifest'],
+    # #     'test': ['coverage'],
+    # },
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.
@@ -132,9 +118,9 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
-        'Bug Reports': 'https://bitbucket.csiro.au/projects/EIS/repos/rr-ml/issues',
+        'Bug Reports': 'https://github.com/csiro-hydroinformatics/efts-python/issues',
         # 'Funding': 'https://donate.pypi.org',
         # 'Say Thanks!': 'http://saythanks.io/to/example',
-        'Source': 'https://bitbucket.csiro.au/projects/EIS/repos/rr-ml',
+        'Source': 'https://github.com/csiro-hydroinformatics/efts-python',
     },
 )
