@@ -1,3 +1,5 @@
+from typing import Any, Callable, Dict, Tuple
+from IPython.core.display import display
 import xarray as xr
 import cftime
 
@@ -14,9 +16,10 @@ from ipyleaflet import Map, Marker, MarkerCluster, basemaps
 # https://github.com/jupyter-widgets/ipywidgets/issues/1853#issuecomment-349201240 seems to do the job...
 from ipywidgets.widgets.interaction import show_inline_matplotlib_plots
 
-class PropertyAdapter:
+class GeoViewer:
     def __init__(self, x_data:xr.Dataset, lat:str='lat', lon:str='lon', key:str='station'):
-        self.marker_info = dict()
+        # TODO: checks on inputs
+        self.marker_info:Dict[Tuple[float,float],str] = dict()
         self.x_data = x_data
         lats = x_data[lat].values
         lons = x_data[lon].values
@@ -27,8 +30,9 @@ class PropertyAdapter:
         n= len(lats)
         for i in range(n):
             self.add_marker_info(lats[i], lons[i], values[i])
+        self.create_popup = self._simple_html_popup()
     
-    def add_marker_info(self, lat, lon, code):
+    def add_marker_info(self, lat:float, lon:float, code:str):
         self.marker_info[(lat, lon)] = code
     
     def get_code(self, lat, lon):
@@ -37,21 +41,30 @@ class PropertyAdapter:
     def data_for_identifier(self, ident):
         raise NotImplementedError()
 
-    def build_map(self, click_handler):
+    def popup_factory(self, func:Callable[[Tuple[float,float]],HTML]):
+        self.create_popup = func
+
+    def _simple_html_popup(self) -> Callable:
+        def f(location):
+            message = HTML()
+            message.description = "Station ID"
+            message.value = str(self.marker_info[location])
+            message.placeholder = ""
+            return message
+        return f
+
+    def build_map(self, click_handler:Callable[[Dict[str,Any]], None]) -> Map:
         mean_lat = self.x_data[self.lat_key].values.mean()
         mean_lng = self.x_data[self.lon_key].values.mean()
         # create the map
         m = Map(center=(mean_lat, mean_lng), zoom=4, basemap=basemaps.Stamen.Terrain)
-        m.layout.height = '600px'
+        m.layout.height = '1200px'
         # show trace
         markers = []
         for k in self.marker_info:
             lat, lon = k
-            message = HTML()
-            message.description = "Station ID"
-            message.value = str(self.marker_info[k])
-            message.placeholder = ""
-            marker = Marker(location=(lat, lon))
+            message = self.create_popup(k)
+            marker = Marker(location=k)
             marker.on_click(click_handler)
             marker.popup = message
             markers.append(marker)
@@ -64,36 +77,26 @@ class PropertyAdapter:
         # m.add_control(FullScreenControl())
         return m
 
-    def plot_series(self, out_widget, variable, loc_id):
+    def plot_series(self, out_widget:Output, variable, loc_id):
         """
         """
         dim_id = None
         if dim_id is None:
             dim_id = self.key
-        tts = self.x_data['q_obs_mm'].sel({dim_id: loc_id})
-        # if using bqplot down the track:
-        # points = gpx.get_points_data(distance_2d=True)
-        # px = [p.distance_from_start / 1000 for p in points]
-        # py = [p.point.elevation for p in points]
-
-        # x_scale, y_scale = LinearScale(), LinearScale()
-        # x_scale.allow_padding = False
-        # x_ax = Axis(label='Time', scale=x_scale)
-        # y_ax = Axis(label='Value', scale=y_scale, orientation='vertical')
-
-        # lines = Lines(x=px, y=py, scales={'x': x_scale, 'y': y_scale})
-
-        # elevation = Figure(title='Elevation Chart', axes=[x_ax, y_ax], marks=[lines])
-        # elevation.layout.width = 'auto'
-        # elevation.layout.height = 'auto'
-        # elevation.layout.min_height = '500px'
-        # elevation.interaction = IndexSelector(scale=x_scale)
-        # with(out_widget):
-        #     plt.plot(tts)
+        tts = self.x_data[variable].sel({dim_id: loc_id})
+        # if using bqplot down the track, see https://github.com/jtpio/voila-gpx-viewer
         out_widget.clear_output()
-        with(out_widget):
+        with out_widget:
             display(tts.plot(figsize=(16,8)))
             show_inline_matplotlib_plots()
+
+    def mk_click_handler_plot_ts(self, out_widget:Output, variable='q_obs_mm'):
+        def click_handler_plot_ts(**kwargs):
+            xy = kwargs['coordinates']
+            ident = self.get_code(xy[0], xy[1])
+            self.plot_series(out_widget, variable=variable, loc_id=ident)
+        return click_handler_plot_ts
+
 
 
 # If printing a data frame straight to an output widget
@@ -112,10 +115,3 @@ class PropertyAdapter:
 
 def click_handler_no_op(**kwargs):
     return
-
-def click_handler_plot_ts(**kwargs):
-    blah = dict(**kwargs)
-    xy = blah['coordinates']
-    ident = globalthing.get_code(xy[0], xy[1])
-    globalthing.plot_series(out, variable='q_obs_mm', loc_id=ident)
-

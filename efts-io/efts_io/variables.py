@@ -1,5 +1,6 @@
 from efts_io.attributes import create_var_attribute_definition
-from efts_io._internals import create_data_variable, create_nc_dims
+from efts_io._internals import create_data_variable
+from efts_io.dimensions import create_nc_dims
 
 #' Create a variable definition
 #'
