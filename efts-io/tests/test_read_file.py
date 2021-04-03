@@ -8,10 +8,9 @@ from datetime import datetime
 pkg_dir = os.path.join(os.path.dirname(__file__),'..')
 # sys.path.insert(0, pkg_dir)
 
-from efts_io.data_wrapper import *
-from efts_io.time_dimensions import *
+from efts_io.wrapper import *
+from efts_io.dimensions import *
 from efts_io.attributes import *
-from efts_io.exported_functions import *
 
 variable_names = ["variable_1", "variable_2"]
 stations_ids = [123, 456]
