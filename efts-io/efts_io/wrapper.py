@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 import os
-from typing import Dict, List
+from typing import Any, Dict, List
 from efts_io.conventions import *
 from efts_io.variables import create_efts_variables, create_variable_definitions
 import numpy as np
@@ -12,8 +12,17 @@ import pandas as pd
 
 from efts_io.conventions import *
 
+def _byte_to_string(x:Any):
+    if isinstance(x, int):
+        if x > 255 or x < 0:
+            raise ValueError("Integer value to bytes: must be in range [0-255]")
+        x = x.to_bytes(1, 'little')
+    if not isinstance(x, bytes):
+        raise ValueError(f"Cannot cast type {type(x)} to bytes")
+    return str(x, encoding='UTF-8')
+
 def _byte_array_to_string(x:np.ndarray):
-    return ''.join([str(s, encoding='UTF-8') for s in x])
+    return ''.join([_byte_to_string(s) for s in x])
 
 def _byte_stations_to_str(byte_names:np.ndarray):
     return np.array([_byte_array_to_string(x) for x in byte_names])
