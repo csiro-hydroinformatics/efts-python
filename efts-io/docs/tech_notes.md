@@ -14,7 +14,7 @@ Note to self: as of Jan 2019 also using github_jm\didactique\doc\know_how.md to 
 ## Code
 
 ```sh
-cd ${HOME}/src/github_jm/efts-python/efts-io
+cd ${HOME}/src/efts-python/efts-io
 ```
 
 ```sh
@@ -31,7 +31,7 @@ conda install -c conda-forge wheel twine six pytest
 
 ```sh
 conda activate ${my_env_name}
-cd ${HOME}/src/github_jm/efts-python/efts-io
+cd ${HOME}/src/efts-python/efts-io
 mkdir -p dist
 rm dist/*
 python3 setup.py sdist bdist_wheel
